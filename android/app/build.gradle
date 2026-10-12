@@ -1,0 +1,31 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.efremandrei.photoforge3d'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.efremandrei.photoforge3d'
+        minSdk 29
+        targetSdk 35
+        versionCode 1
+        versionName '1.0.0'
+        testInstrumentationRunner 'com.efremandrei.photoforge3d.FlowTest'
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    signingConfigs {
+        release {
+            def file = rootProject.file('../.signing/signing.properties')
+            if (file.exists()) {
+                def properties = new Properties()
+                file.withInputStream { properties.load(it) }
+                storeFile rootProject.file('../.signing/photoforge.jks')
+                storePassword properties.getProperty('password')
+                keyAlias 'photoforge'
+                keyPassword properties.getProperty('password')
+            }
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.release }
+        debug { if (rootProject.file('../.signing/signing.properties').exists()) signingConfig signingConfigs.release }
+    }
+}
